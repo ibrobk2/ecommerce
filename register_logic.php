@@ -1,16 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
+<body>
+    
+
+
 <?php
 // Include the database connection file
 include 'server.php';
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-require 'PHPMailer/Exception.php';
-require 'PHPMailer/PHPMailer.php';
-require 'PHPMailer/SMTP.php';
-
 // Check if the form is submitted
 if (isset($_POST['register-btn'])) {
+    include "sendEmail.php";
     // Retrieve form data
     $full_name = $_POST['full_name'];
     $email = $_POST['email'];
@@ -25,27 +30,26 @@ if (isset($_POST['register-btn'])) {
 
     // Execute the query
     if (mysqli_query($conn, $sql)) {
+       
+        $sender_email = 'ibrobk@gmail.com';
+        $receiver_email = $email;
+        $subject = 'Email Verification';
+        $message = 'Your verification code is: <b>' . $token.'</b>';
+        $app_password = 'uutlrsimejhlogzp';
         // echo "User registered successfully.";
         // Send and Email to the user
-        $mail = new PHPMailer();
-        $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->Port = 465;
-        $mail->SMTPSecure = 'ssl';
-        $mail->SMTPAuth = true;
-        $mail->isHTML(true);
-        $mail->Username = 'ibrobk@gmail.com'; // Your Gmail address
-        $mail->Password = ''; // Your Gmail password
-        $mail->setFrom('ibrobk@gmail.com', 'eCommerce App');
-        $mail->addAddress($email, $full_name);
-        $mail->Subject = 'Email Verification';
-        $mail->Body = 'Your verification code is: <b>' . $token.'</b>';
         
-        if ($mail->send()) {
+        // sendMail($conn, $sender_email, $receiver_email, $subject, $message)
+        if (sendEmail($sender_email, $app_password, $receiver_email, $subject, $message)) {
             echo "
             <script>
-                 alert('Registration successfully.');
-                 window.location = 'email_verify.php?email={$email}'
+                swal('Good Job', 'Registration Successful...', 'success');
+                function x(){
+             
+                    window.location = 'email_verify.php?email={$email}'
+                }
+
+                setTimeout(x, 2000);
             </script>";
         } else {
             echo "Error sending verification code: " . $mail->ErrorInfo;
@@ -58,3 +62,6 @@ if (isset($_POST['register-btn'])) {
     mysqli_close($conn);
 }
 ?>
+
+</body>
+</html>

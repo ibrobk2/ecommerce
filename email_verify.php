@@ -6,6 +6,8 @@
   <title>Email Verification</title>
   <!-- Bootstrap CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
   <style>
     body {
       background-color: #f8f9fa;
@@ -20,18 +22,20 @@
     }
   </style>
 </head>
-<body>
+<body>  
+
   <div class="verification-container">
     <h2 class="text-center mb-4">Email Verification</h2>
     <p>Please check your email inbox and enter the verification code below:</p>
-    <form>
+    <form action="verification.php" method="post">
+    <input type="hidden" name="email" value="<?= $_GET['email']; ?>">
       <div class="form-group">
-        <input type="text" class="form-control" id="verificationCode" placeholder="Enter verification code" required>
+        <input type="text" class="form-control" id="verificationCode" placeholder="Enter verification code" required name="token">
       </div>
-      <button type="submit" class="btn btn-primary btn-block">Verify</button>
+      <button type="submit" class="btn btn-primary btn-block" name="btn-verify">Verify</button>
     </form>
     <div class="text-center mt-3">
-      <button class="btn btn-link">Resend Verification Email</button>
+      <button class="btn btn-link" onclick="<?php resend_token(); ?>">Resend Verification Email</button>
     </div>
   </div>
 </body>
