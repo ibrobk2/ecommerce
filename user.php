@@ -13,8 +13,50 @@
       margin-top: 100px;
     }
   </style>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 </head>
 <body>
+
+<?php
+include 'server.php'; // Include your database connection file
+
+session_start();
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    // Check if the email exists in the database
+    $sql = "SELECT * FROM users WHERE email = '$email'";
+    $result = mysqli_query($conn, $sql);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        $password_hash = $row['password_hash'];
+
+        // Verify the password
+        if (password_verify($password, $password_hash)) {
+            // Password is correct, set session and redirect
+            $_SESSION['logged'] = $email;
+            echo "
+            <script>
+                swal('Good Job', 'Logged In Successful', 'success');
+                function x(){
+             
+                    window.location = './'
+                }
+    
+                setTimeout(x, 2000);
+            </script>";            exit();
+        } else {
+            echo "<script>alert('Incorrect password!');</script>";
+        }
+    } else {
+        echo "<script>alert('User not found!');</script>";
+    }
+}
+?>
 
   <div class="container">
     <div class="row justify-content-center">
@@ -36,11 +78,11 @@
                 <form action="user.php" method="post">
                   <div class="form-group">
                     <label for="login-email">Email</label>
-                    <input type="email" class="form-control" id="login-email" placeholder="Enter email">
+                    <input type="email" class="form-control" id="login-email" placeholder="Enter email" name="email">
                   </div>
                   <div class="form-group">
                     <label for="login-password">Password</label>
-                    <input type="password" class="form-control" id="login-password" placeholder="Password">
+                    <input type="password" class="form-control" id="login-password" placeholder="Password" name="password">
                   </div>
                   <button type="submit" class="btn btn-primary btn-block" name="login-btn">Login</button>
                 </form>
