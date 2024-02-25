@@ -23,6 +23,20 @@ include 'server.php'; // Include your database connection file
 
 session_start();
 
+
+if(isset($_GET['product_id'])){
+
+   $product_id = $_GET['product_id'];
+   $product_set = true;
+
+   $_SESSION['set'] = $product_set;
+   $_SESSION['product'] = $product_id;
+}
+ 
+
+
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -39,16 +53,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($password, $password_hash)) {
             // Password is correct, set session and redirect
             $_SESSION['logged'] = $email;
-            echo "
-            <script>
-                swal('Good Job', 'Logged In Successful', 'success');
-                function x(){
-             
-                    window.location = './'
-                }
-    
-                setTimeout(x, 2000);
-            </script>";            exit();
+             if(isset($_SESSION['set'])){
+         
+              echo "
+              <script>
+                  swal('Good Job', 'Logged In Successful', 'success');
+                  function y(){
+               
+                      window.location = 'view_product.php?view=".$_SESSION["product"]."'
+                  }
+      
+                  setTimeout(y, 2000);
+              </script>";    
+              exit();
+             }  
+              else{
+                echo "
+                <script>
+                    swal('Good Job', 'Logged In Successful3', 'success');
+                    function x(){
+                 
+                        window.location = './'
+                    }
+        
+                    setTimeout(x, 6000);
+                </script>";  
+                exit();  
+             }     
+            
         } else {
             echo "<script>alert('Incorrect password!');</script>";
         }
@@ -56,6 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "<script>alert('User not found!');</script>";
     }
 }
+
 ?>
 
   <div class="container">
